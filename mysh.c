@@ -37,6 +37,10 @@ int main(int argc, char *argv[]) {
     // File mode
     if (argc == 2) {
         FILE *in = fopen(argv[1], "r");
+        if (in == NULL) {
+            perror("mysh: fopen");
+            return EXIT_FAILURE;
+        }
         int res = repl_script(in);
         fclose(in);
         return res;

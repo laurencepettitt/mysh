@@ -14,15 +14,10 @@ char* PWD = NULL;
 // OLDPWD
 char* OWD = NULL;
 
-char *abs_path(char *p) {
-    char *buf = malloc(sizeof(char)*(PATH_MAX+1));
-    return realpath(p, buf);
-}
-
 int mysh_chdir(char *nwd) {
     if (nwd == NULL)
         return EXIT_FAILURE;
-    char *abs_nwd = abs_path(nwd);
+    char *abs_nwd = realpath(nwd, NULL);
     if (abs_nwd == NULL) {
         perror("mysh: cd");
         return EXIT_FAILURE;
@@ -38,8 +33,12 @@ int mysh_chdir(char *nwd) {
 }
 
 int launch_builtin_cd(char **args) {
-    if (PWD == NULL)
-        PWD = strdup(getenv("PWD")); // TODO: strdup
+    if (PWD == NULL) {
+        char *pwd = getenv("PWD");
+        if (pwd == NULL)
+            pwd = getenv("HOME");
+        PWD = strdup(pwd);
+    }
     if (OWD == NULL)
         OWD = strdup(PWD);
     if (args[0] == NULL || strcmp(args[0], "cd") != 0)
