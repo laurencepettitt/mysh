@@ -1,2 +1,0 @@
-/usr/bin/ar qc liblibmyshlauncher.a  CMakeFiles/libmyshlauncher.dir/libmyshlauncher.c.o
-/usr/bin/ranlib liblibmyshlauncher.a

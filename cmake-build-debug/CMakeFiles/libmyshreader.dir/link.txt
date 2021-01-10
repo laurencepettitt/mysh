@@ -1,2 +1,0 @@
-/usr/bin/ar qc liblibmyshreader.a  CMakeFiles/libmyshreader.dir/libmyshreader.c.o
-/usr/bin/ranlib liblibmyshreader.a
