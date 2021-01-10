@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="mysh"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="libmyshlauncher">
+				<Option output="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/liblibmyshlauncher.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 libmyshlauncher"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="libmyshlauncher/fast">
+				<Option output="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/liblibmyshlauncher.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 libmyshlauncher/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="libmyshparser">
+				<Option output="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/liblibmyshparser.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 libmyshparser"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="libmyshparser/fast">
+				<Option output="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/liblibmyshparser.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 libmyshparser/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="libmyshreader">
+				<Option output="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/liblibmyshreader.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 libmyshreader"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="libmyshreader/fast">
+				<Option output="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/liblibmyshreader.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 libmyshreader/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="mysh">
+				<Option output="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/mysh" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 mysh"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="mysh/fast">
+				<Option output="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/mysh" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.2.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 mysh/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/bison_parser.c">
+			<Option target="libmyshparser"/>
+		</Unit>
+		<Unit filename="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/bison_parser.c.rule">
+			<Option target="libmyshparser"/>
+		</Unit>
+		<Unit filename="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/bison_parser.h">
+			<Option target="libmyshparser"/>
+		</Unit>
+		<Unit filename="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/flex_lexer.c">
+			<Option target="libmyshparser"/>
+		</Unit>
+		<Unit filename="/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/flex_lexer.c.rule">
+			<Option target="libmyshparser"/>
+		</Unit>
+		<Unit filename="/home/laurence/CLionProjects/mysh-new/mysh/libmyshlauncher.c">
+			<Option target="libmyshlauncher"/>
+		</Unit>
+		<Unit filename="/home/laurence/CLionProjects/mysh-new/mysh/libmyshlauncher.h">
+			<Option target="libmyshlauncher"/>
+		</Unit>
+		<Unit filename="/home/laurence/CLionProjects/mysh-new/mysh/libmyshparser.c">
+			<Option target="libmyshparser"/>
+		</Unit>
+		<Unit filename="/home/laurence/CLionProjects/mysh-new/mysh/libmyshparser.h">
+			<Option target="libmyshparser"/>
+		</Unit>
+		<Unit filename="/home/laurence/CLionProjects/mysh-new/mysh/libmyshreader.c">
+			<Option target="libmyshreader"/>
+		</Unit>
+		<Unit filename="/home/laurence/CLionProjects/mysh-new/mysh/libmyshreader.h">
+			<Option target="libmyshreader"/>
+		</Unit>
+		<Unit filename="/home/laurence/CLionProjects/mysh-new/mysh/mysh.c">
+			<Option target="mysh"/>
+		</Unit>
+		<Unit filename="/home/laurence/CLionProjects/mysh-new/mysh/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

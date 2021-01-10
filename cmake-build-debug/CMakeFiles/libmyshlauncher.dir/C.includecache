@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/laurence/CLionProjects/mysh-new/mysh/libmyshexitcodes.h
+
+/home/laurence/CLionProjects/mysh-new/mysh/libmyshlauncher.c
+stdio.h
+-
+stdlib.h
+-
+unistd.h
+-
+string.h
+/home/laurence/CLionProjects/mysh-new/mysh/string.h
+wait.h
+-
+limits.h
+-
+libmyshexitcodes.h
+/home/laurence/CLionProjects/mysh-new/mysh/libmyshexitcodes.h
+libmyshlauncher.h
+/home/laurence/CLionProjects/mysh-new/mysh/libmyshlauncher.h
+
+/home/laurence/CLionProjects/mysh-new/mysh/libmyshlauncher.h
+

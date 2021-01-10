@@ -1,0 +1,6 @@
+/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/CMakeFiles/libmyshlauncher.dir
+/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/CMakeFiles/libmyshparser.dir
+/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/CMakeFiles/libmyshreader.dir
+/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/laurence/CLionProjects/mysh-new/mysh/cmake-build-debug/CMakeFiles/mysh.dir

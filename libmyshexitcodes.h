@@ -1,0 +1,9 @@
+#ifndef LIBMYSHSIGNAL_H
+#define LIBMYSHSIGNAL_H
+
+#define EXIT_EOF (256)
+#define EXIT_SIGNAL_OFFSET (128)
+#define EXIT_SYNTAX_ERROR (2)
+#define EXIT_UNKNOWN_COMMAND (127)
+
+#endif
