@@ -1,4 +1,4 @@
-%option noyywrap nodefault
+%option noyywrap nodefault nounput noinput
 
 %{
     # define YYSTYPE char*

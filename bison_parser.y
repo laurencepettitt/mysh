@@ -1,4 +1,3 @@
-%define parse.trace
 %define parse.error custom
 
 %{
@@ -8,6 +7,8 @@
 
 void add_arg(char *arg);
 void end_expr();
+int yylex();
+int yyerror(const char * format);
 %}
 
 %token <YYSTYPE> STRING
@@ -41,6 +42,19 @@ static int yyreport_syntax_error(const yypcontext_t *ctx)
     int res = 0;
     fprintf(stderr, "error:%d: syntax error", line_number);
 
+    // Report the tokens expected at this point.
+    {
+        enum { TOKENMAX = 5 };
+        yysymbol_kind_t expected[TOKENMAX];
+        int n = yypcontext_expected_tokens (ctx, expected, TOKENMAX);
+        if (n < 0)
+        // Forward errors to yyparse.
+        res = n;
+        else
+        for (int i = 0; i < n; ++i)
+            fprintf (stderr, "%s %s",
+                    i == 0 ? ": expected" : " or", yysymbol_name (expected[i]));
+    }
 
     // Report the unexpected token.
     {

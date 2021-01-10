@@ -37,7 +37,7 @@ void reset_arg_list() {
 }
 
 void free_args() {
-    for (int i = 0; i < arg_list_len; ++i) {
+    for (size_t i = 0; i < arg_list_len; ++i) {
         free(arg_list[i]);
         arg_list[i] = NULL;
     }
@@ -88,8 +88,8 @@ int parse_line(const char *line)
         return launch(NULL);
     int res = parse_line_internal(line);
     if (res == EXIT_SUCCESS) {
-        for (int i = 0; i < arg_list_len;) {
-            int j;
+        for (size_t i = 0; i < arg_list_len;) {
+            size_t j;
             for (j = i; j < arg_list_len; j++) {
                 if (arg_list[j] == NULL)
                     break;
