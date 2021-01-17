@@ -32,7 +32,7 @@ int mysh_chdir(char *nwd) {
     return res;
 }
 
-int launch_builtin_cd(char **args) {
+int launch_builtin_cd(size_t argc, char **args) {
     if (PWD == NULL) {
         char *pwd = getenv("PWD");
         if (pwd == NULL)
@@ -41,11 +41,15 @@ int launch_builtin_cd(char **args) {
     }
     if (OWD == NULL)
         OWD = strdup(PWD);
-    if (args[0] == NULL || strcmp(args[0], "cd") != 0)
+    if (argc == 0 || args[0] == NULL || strcmp(args[0], "cd") != 0)
         return -1;
     // Go home
-    if (args[1] == NULL) {
+    if (argc == 1) {
         return mysh_chdir(getenv("HOME"));
+    }
+    if (argc > 2) {
+        fprintf(stderr, "%s", "mysh: cd: too many arguments.");
+        return EXIT_FAILURE;
     }
     // Go to previous dir
     if (strcmp(args[1], "-") == 0) {
@@ -57,7 +61,7 @@ int launch_builtin_cd(char **args) {
     return mysh_chdir(args[1]);
 }
 
-int launch_builtin(char **args) {
+int launch_builtin(size_t argc, char **args) {
     // EOF
     if (args == NULL)
         return EXIT_EOF;
@@ -69,7 +73,7 @@ int launch_builtin(char **args) {
         return EXIT_EOF;
     // Change directory command
     if (strcmp(args[0], "cd") == 0)
-        return launch_builtin_cd(args);
+        return launch_builtin_cd(argc, args);
     // Not a builtin
     return -1;
 }
@@ -103,8 +107,8 @@ int launch_exec(char **args) {
     return EXIT_FAILURE;
 }
 
-int launch(char **args) {
-    int res = launch_builtin(args);
+int launch(size_t argc, char **args) {
+    int res = launch_builtin(argc, args);
     if (res >= EXIT_SUCCESS)
         return res;
     return launch_exec(args);

@@ -12,7 +12,7 @@ extern void yy_switch_to_buffer (YY_BUFFER_STATE new_buffer);
 extern void yy_delete_buffer(YY_BUFFER_STATE buffer);
 extern int yyparse();
 
-int launch(char **args);
+int launch(size_t argc, char **args);
 
 typedef char *arg_t;
 
@@ -85,7 +85,7 @@ int parse_line_internal(const char *line) {
 int parse_line(const char *line)
 {
     if (line == NULL)
-        return launch(NULL);
+        return launch(0, NULL);
     int res = parse_line_internal(line);
     if (res == EXIT_SUCCESS) {
         for (size_t i = 0; i < arg_list_len;) {
@@ -94,7 +94,7 @@ int parse_line(const char *line)
                 if (arg_list[j] == NULL)
                     break;
             }
-            int nres = launch(arg_list + i);
+            int nres = launch(j - i, arg_list + i);
             if (nres == EXIT_EOF) {
                 res += EXIT_EOF;
                 if (i > 0)

@@ -1,6 +1,6 @@
 #ifndef LIBMYSHLAUNCHER_H
 #define LIBMYSHLAUNCHER_H
 
-int launch(char **args);
+int launch(size_t argc, char **args);
 
 #endif
