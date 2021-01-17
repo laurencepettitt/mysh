@@ -25,9 +25,11 @@ int line_number = 1;
 int status = EXIT_SUCCESS;
 int running = 1;
 
-void receive_signal() {
+void receive_signal(int print_message) {
     sigint_received = 0;
     status = EXIT_SIGNAL_OFFSET + SIGINT;
+    if (print_message)
+        fprintf(stderr, "Killed by signal %d\n", SIGINT);
 }
 
 int linehandler(const char *line) {
@@ -35,10 +37,8 @@ int linehandler(const char *line) {
     // No EOF received
     if (next_status < EXIT_EOF) {
         status = next_status;
-        if (status >= EXIT_SIGNAL_OFFSET) {
-            receive_signal();
-            fprintf(stderr, "Killed by signal %d\n", SIGINT);
-        }
+        if (status >= EXIT_SIGNAL_OFFSET)
+            receive_signal(1);
         return EXIT_SUCCESS;
     }
     // If next_status is strictly greater than EXIT_EOF, a command was executed on this line before we got EXIT_EOF.
@@ -67,13 +67,17 @@ int repl_string(char *in) {
     const char nl[2] = "\n";
     while (running) {
         char *line = strtok(in, nl);
+        if (sigint_received) {
+            receive_signal(1);
+            break;
+        }
         if (line == NULL)
             break;
         in = NULL;
         linehandler(line);
         line_number++;
         if (sigint_received) {
-            sigint_received = 0;
+            receive_signal(1);
             break;
         }
     }
@@ -99,7 +103,7 @@ int repl_file(int fd) {
         }
 
         if (sigint_received) {
-            receive_signal();
+            receive_signal(1);
             break;
         }
 
@@ -131,7 +135,7 @@ int repl_file(int fd) {
         }
 
         if (sigint_received) {
-            receive_signal();
+            receive_signal(1);
             break;
         }
     }
@@ -153,7 +157,7 @@ int repl_interactive()
     while (running) {
 //        rl_set_prompt(prompt);
         if (sigint_received) {
-            receive_signal();
+            receive_signal(0);
             rl_free_line_state();
             rl_callback_sigcleanup();
             rl_crlf(); // Move input to a new line
