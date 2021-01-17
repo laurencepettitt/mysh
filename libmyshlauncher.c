@@ -49,7 +49,9 @@ int launch_builtin_cd(char **args) {
     }
     // Go to previous dir
     if (strcmp(args[1], "-") == 0) {
-        return mysh_chdir(OWD);
+        int res = mysh_chdir(OWD);
+        printf("%s\n", PWD);
+        return res;
     }
     // Go to dir
     return mysh_chdir(args[1]);
