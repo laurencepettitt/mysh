@@ -37,10 +37,9 @@ int launch_builtin_cd(size_t argc, char **args) {
         char *pwd = getenv("PWD");
         if (pwd == NULL)
             pwd = getenv("HOME");
-        PWD = strdup(pwd);
+        if (pwd != NULL)
+            mysh_chdir(pwd);
     }
-    if (OWD == NULL)
-        OWD = strdup(PWD);
     if (argc == 0 || args[0] == NULL || strcmp(args[0], "cd") != 0)
         return -1;
     // Go home
