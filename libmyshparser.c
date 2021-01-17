@@ -5,14 +5,13 @@
 #include <string.h>
 #include "libmyshexitcodes.h"
 #include "libmyshparser.h"
+#include "libmyshlauncher.h"
 
 typedef char *YY_BUFFER_STATE;
 extern YY_BUFFER_STATE yy_scan_string(const char * str);
 extern void yy_switch_to_buffer (YY_BUFFER_STATE new_buffer);
 extern void yy_delete_buffer(YY_BUFFER_STATE buffer);
 extern int yyparse();
-
-int launch(size_t argc, char **args);
 
 typedef char *arg_t;
 

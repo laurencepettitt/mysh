@@ -15,12 +15,10 @@
 #include <signal.h>
 
 #include "libmyshexitcodes.h"
-
 #include "libmyshreader.h"
+#include "libmyshparser.h"
 
-int parse_line(const char* line);
-
-extern int sigint_received;
+extern volatile sig_atomic_t sigint_received;
 
 int line_number = 1;
 
@@ -63,26 +61,81 @@ static void rl_callback_handler(char *line) {
     rl_callback_handler_remove();
 }
 
-int repl_script(FILE *in) {
+int repl_string(char *in) {
     if (in == NULL)
         return EXIT_FAILURE;
-    char *line = NULL;
-    size_t len = 0;
+    const char nl[2] = "\n";
     while (running) {
-        ssize_t res = getline(&line, &len, in);
-        if (res == -1) {
-            free(line);
+        char *line = strtok(in, nl);
+        if (line == NULL)
             break;
-        }
+        in = NULL;
         linehandler(line);
-        free(line);
-        line = NULL;
         line_number++;
         if (sigint_received) {
             sigint_received = 0;
             break;
         }
     }
+    return status;
+}
+
+int repl_file(int fd) {
+    char *lbuf = NULL;
+    size_t lbuf_len = 0;
+    size_t lbuf_cap = 0;
+
+    while (running) {
+        char c;
+        int s = read(fd, &c, 1);
+        if (s == -1) {
+            perror("mysh: read");
+            status = EXIT_FAILURE;
+            break;
+        }
+        
+        if (s == 0) {
+            break;
+        }
+
+        if (sigint_received) {
+            receive_signal();
+            break;
+        }
+
+        if (c == '\n')
+            c = '\0';
+
+        if (lbuf == NULL) {
+            size_t cap = 1;
+            lbuf = malloc(cap * sizeof(char));
+            lbuf_len = 0;
+            lbuf_cap = cap;
+        }
+
+        if (lbuf_len + 1 > lbuf_cap) {
+            lbuf_cap *= 2;
+            lbuf = realloc(lbuf, lbuf_cap * sizeof(char));
+        }
+
+        lbuf[lbuf_len] = c;
+        lbuf_len++;
+
+        if (c == '\0') {
+            linehandler(lbuf);
+            free(lbuf);
+            lbuf = NULL;
+            lbuf_len = 0;
+            lbuf_cap = 0;
+            line_number++;
+        }
+
+        if (sigint_received) {
+            receive_signal();
+            break;
+        }
+    }
+    free(lbuf);
     return status;
 }
 
@@ -93,10 +146,6 @@ int repl_interactive()
     fd_set fds;
     int r;
 
-    /* Set the default locale values according to environment variables. */
-    setlocale(LC_ALL, "");
-
-    /* Install the line handler. */
     rl_callback_handler_install(prompt, (rl_vcpfunc_t*) &rl_callback_handler);
 
     status = EXIT_SUCCESS;
