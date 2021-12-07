@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "libmyshexitcodes.h"
-#include "libmyshparser.h"
-#include "libmyshlauncher.h"
+#include "exitcodes.h"
+#include "parser.h"
+#include "launcher.h"
 
 typedef char *YY_BUFFER_STATE;
 extern YY_BUFFER_STATE yy_scan_string(const char * str);

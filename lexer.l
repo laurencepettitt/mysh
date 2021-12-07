@@ -2,7 +2,7 @@
 
 %{
     # define YYSTYPE char*
-    #include "bison_parser.tab.h"
+    #include "parser.tab.h"
 %}
 
 %%

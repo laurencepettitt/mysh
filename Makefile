@@ -1,13 +1,23 @@
-all: mysh
+.prevent_execution:
+	exit 0
 
-bison_parser.tab.c bison_parser.tab.h:	bison_parser.y
-	bison -t -v -d bison_parser.y
+CC = gcc
+FLEX = flex
+BISON = bison
 
-lex.yy.c: flex_lexer.l bison_parser.tab.h
-	flex flex_lexer.l
+PROGRAMS = mysh
 
-mysh: lex.yy.c bison_parser.tab.c bison_parser.tab.h libmyshlauncher.c libmyshparser.c libmyshreader.c mysh.c
-	gcc -Wall -Wextra -o mysh bison_parser.tab.c lex.yy.c libmyshlauncher.c libmyshparser.c libmyshreader.c mysh.c -lreadline
+all: $(PROGRAMS)
+
+parser.tab.c parser.tab.h:	parser.y
+	$(BISON) -t -v -d parser.y
+
+lexer.yy.c: lexer.l parser.tab.h
+	$(FLEX) -o lexer.yy.c lexer.l
+
+# TODO - separate compile and link steps
+mysh: lexer.yy.c parser.tab.c parser.tab.h launcher.c parser.c reader.c mysh.c
+	$(CC) -Wall -Wextra -o mysh parser.tab.c lexer.yy.c launcher.c parser.c reader.c mysh.c -lreadline
 
 clean:
-	rm bison_parser.output bison_parser.tab.c bison_parser.tab.h lex.yy.c mysh
+	rm -rf *.output *.tab.c *.tab.h *.yy.c mysh

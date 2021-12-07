@@ -14,9 +14,9 @@
 
 #include <signal.h>
 
-#include "libmyshexitcodes.h"
-#include "libmyshreader.h"
-#include "libmyshparser.h"
+#include "exitcodes.h"
+#include "reader.h"
+#include "parser.h"
 
 extern volatile sig_atomic_t sigint_received;
 
@@ -41,8 +41,8 @@ int linehandler(const char *line) {
             receive_signal(1);
         return EXIT_SUCCESS;
     }
-    // If next_status is strictly greater than EXIT_EOF, a command was executed on this line before we got EXIT_EOF.
-    // so the exit status of the previous command was added to EXIT_EOF + 1 before being returned as next_status.
+    // If next_status is strictly greater than EXIT_EOF, a command was executed on this line, then we got EXIT_EOF.
+    // In this case, the exit status of the command was added to EXIT_EOF + 1 before being returned as next_status.
     if (next_status > EXIT_EOF)
         status = next_status - EXIT_EOF - 1;
     // If next_status is equal to EXIT_EOF, then we received EOF, so keep status from previous command and stop running.

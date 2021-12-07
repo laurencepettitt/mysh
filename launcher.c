@@ -4,8 +4,8 @@
 #include "string.h"
 #include <wait.h>
 #include <limits.h> /* PATH_MAX */
-#include "libmyshexitcodes.h"
-#include "libmyshlauncher.h"
+#include "exitcodes.h"
+#include "launcher.h"
 
 extern int sigint_received;
 
@@ -14,6 +14,9 @@ char* PWD = NULL;
 // OLDPWD
 char* OWD = NULL;
 
+/* Changes directory to nwd.
+ * Also keeps environment up to date and handles errors.
+ */
 int mysh_chdir(char *nwd) {
     if (nwd == NULL)
         return EXIT_FAILURE;
@@ -31,8 +34,12 @@ int mysh_chdir(char *nwd) {
     }
     return res;
 }
-
+/* Launches the builtin "cd" command with an optional argument.
+ * First element of args must be "cd"
+ * Second element of args can be an optional argument.
+ * */
 int launch_builtin_cd(size_t argc, char **args) {
+    // Make sure PWD is consistent
     if (PWD == NULL) {
         char *pwd = getenv("PWD");
         if (pwd == NULL)
@@ -40,15 +47,17 @@ int launch_builtin_cd(size_t argc, char **args) {
         if (pwd != NULL)
             mysh_chdir(pwd);
     }
+    // First element of args list must be "cd"
     if (argc == 0 || args[0] == NULL || strcmp(args[0], "cd") != 0)
         return -1;
-    // Go home
-    if (argc == 1) {
-        return mysh_chdir(getenv("HOME"));
-    }
+    // Too many args
     if (argc > 2) {
         fprintf(stderr, "%s", "mysh: cd: too many arguments.");
         return EXIT_FAILURE;
+    }
+    // Go home
+    if (argc == 1) {
+        return mysh_chdir(getenv("HOME"));
     }
     // Go to previous dir
     if (strcmp(args[1], "-") == 0) {
@@ -60,6 +69,10 @@ int launch_builtin_cd(size_t argc, char **args) {
     return mysh_chdir(args[1]);
 }
 
+/* Launches a builtin command (with optional arguments).
+ * First element of args list is name of command.
+ * Following elements are arguments to the command.
+ */
 int launch_builtin(size_t argc, char **args) {
     // EOF
     if (args == NULL)
@@ -77,6 +90,11 @@ int launch_builtin(size_t argc, char **args) {
     return -1;
 }
 
+/* Launches an external (non-builtin) command.
+ * The process forks and execs the command in a child process.
+ * First element of args must be the actual command.
+ * Following elements of args can be arguments to the command.
+ */
 int launch_exec(char **args) {
     pid_t pid;
     int status;
@@ -106,9 +124,13 @@ int launch_exec(char **args) {
     return EXIT_FAILURE;
 }
 
+/* Launches a command (builtin or external).
+ */
 int launch(size_t argc, char **args) {
+    // First try to launch the command as a builtin (will not do anything if not)
     int res = launch_builtin(argc, args);
-    if (res >= EXIT_SUCCESS)
-        return res;
-    return launch_exec(args);
+    // If it was not a builtin command, launch with exec
+    if (res == -1)
+        res = launch_exec(args);
+    return res;
 }

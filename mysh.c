@@ -3,7 +3,7 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "libmyshreader.h"
+#include "reader.h"
 #include <stdlib.h>
 
 volatile sig_atomic_t sigint_received;
