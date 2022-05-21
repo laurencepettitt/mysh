@@ -9,7 +9,7 @@ void yyerror(struct listq_head **parse_result, char *);
 int yylex();
 //int yyerror(const char * format);
 %}
-
+%debug
 %define parse.error custom
 %locations
 %parse-param {struct listq_head **parse_result}
@@ -20,12 +20,12 @@ int yylex();
 %union {
     char *str;
     struct arg_list_t *arg_list_p;
-    struct Redirs redir_data;
+    Redir redir_data;
     struct cmdq_head *pipeline_data;
     struct listq_head *list_data;
 }
 %type <str> arg file
-%type <redir_data> redirs in_redir out_redir redir
+%type <redir_data> redirs in_redir out_redir redir out_redir_append
 %type <arg_list_p> args cmd
 %type <pipeline_data> pipeline
 %type <list_data> list
@@ -35,60 +35,65 @@ int yylex();
 
 // line is a list optionally followed with a semicolon
 line:
-    %empty { printf("line: empty\n"); *parse_result = NULL; }
+    %empty { printf("line: empty\n"); }
     | list { printf("line: list\n"); *parse_result = $1; }
     | list ';' { printf("line: list ';'\n"); *parse_result = $1; }
     ;
 
 // list is a list of pipeline, separated by semicolons
 list:
-    pipeline { printf("list: pipeline\n"); $$ = init_listq(alloc_listq_elem($1)); }
-    | list ';' pipeline { printf("list: list ';' pipeline\n"); $$ = insert_listq_elem($1, alloc_listq_elem($3)); }
+    pipeline { printf("list: pipeline\n"); print_cmdq($1); struct listq_elem *e = alloc_listq_elem($1); print_listqelem(e); $$ = init_listq(e); print_listqelem(e);}
+    | list ';' pipeline { printf("list: list ';' pipeline\n"); struct listq_elem *e = alloc_listq_elem($3); print_listqelem(e); $$ = insert_listq_elem($1, e); print_listqelem(e); }
     ;
 
 // pipeline is a list of commands, separated by pipes
 pipeline:
-    cmd {printf("pipeline: cmd\n");  $$ = init_cmdq(alloc_cmdq_elem($1)); }
-    | pipeline '|' cmd { printf("pipeline: pipeline '|' cmd\n"); $$ = insert_cmdq_elem($1, alloc_cmdq_elem($3)); }
+    cmd { printf("pipeline: cmd\n");  $$ = init_cmdq(alloc_cmdq_elem($1)); }
+    | pipeline '|' cmd { printf("pipeline: pipeline '|' cmd\n"); struct cmdq_elem * e = alloc_cmdq_elem($3); print_cmdqelem(e); $$ = insert_cmdq_elem($1, e); print_cmdqelem(e); }
     ;
 
 // cmd is a list of args (with optional redirection(s) for input or output)
 cmd:
-    args { $$ = $1; }
-    | redirs args { $$ = set_arg_list_redir($2, $1); }
-    | args redirs { $$ = set_arg_list_redir($1, $2); }
-    | redirs args redirs { { $$ = set_arg_list_redir($2, merge_redirs($1, $3)); }}
+    args { printf("cmd: args\n"); $$ = $1; }
+    | redirs args { printf("cmd: redirs args\n"); $$ = set_arg_list_redir($2, $1); }
+    | args redirs { printf("cmd: args redirs\n"); $$ = set_arg_list_redir($1, $2); }
+    | redirs args redirs { printf("cmd: redirs args redirs\n"); { $$ = set_arg_list_redir($2, merge_redirs($1, $3)); }}
     ;
 
 redirs:
-    redir { $$ = $1; }
-    | redirs redir { $$ = merge_redirs($1, $2); }
+    redir { printf("redirs: redir\n"); $$ = $1; }
+    | redirs redir { printf("redirs: redirs redir\n"); $$ = merge_redirs($1, $2); }
     ;
 
 redir:
     in_redir { $$ = $1; }
     | out_redir { $$ = $1; }
+    | out_redir_append { $$ = $1; }
     ;
 
 in_redir:
-    '<' file { $$ = init_redir($2, NULL); }
+    '<' file { printf("in_redir: '<' file\n"); $$ = init_redir($2, NULL, -1); }
     ;
 
 out_redir:
-    '>' file { $$ = init_redir(NULL, $2); }
+    '>' file { printf("out_redir: '>' file\n"); $$ = init_redir(NULL, $2, 0); }
+    ;
+
+out_redir_append:
+    ">>" file { printf("out_redir_append: \">>\" file\n"); $$ = init_redir(NULL, $2, 1); }
     ;
 
 args:
-    arg { $$ = add_arg(init_arg_list(), $1); }
-    | args arg { $$ = add_arg($1, $2); }
+    arg { printf("args: arg\n"); $$ = add_arg(init_arg_list(), $1); }
+    | args arg { printf("args: args arg\n"); $$ = add_arg($1, $2); }
     ;
 
 file:
-    STRING { $$ = yylval.str; }
+    STRING { printf("file: STRING (%s)\n", yylval.str); $$ = yylval.str; }
     ;
 
 arg:
-    STRING { $$ = yylval.str; }
+    STRING { printf("arg: STRING (%s)\n", yylval.str); $$ = yylval.str; }
     ;
 
 %%

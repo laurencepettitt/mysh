@@ -9,6 +9,7 @@ typedef char *arg_t;
 struct Redirs {
     char *in_redir;
     char *out_redir;
+    int out_redir_append;
 };
 typedef struct Redirs Redir;
 
@@ -19,21 +20,32 @@ struct arg_list_t {
     Redir redir;
 };
 
-struct cmdq_elem {
-    TAILQ_ENTRY(cmdq_elem) tailq;
-    struct arg_list_t *datum;
-    /* ... */
+
+struct cmd_list_t {
+    struct arg_list_t *head;
+    size_t length;
+    size_t capacity;
 };
 
-TAILQ_HEAD(cmdq_head, cmdq_elem);
+struct list_list_t {
+    struct cmd_list_t *head;
+    size_t length;
+    size_t capacity;
+};
+
+struct cmdq_elem {
+    struct arg_list_t *arg_list;
+    STAILQ_ENTRY(cmdq_elem) cmdq_entries;
+};
+
+STAILQ_HEAD(cmdq_head, cmdq_elem);
 
 struct listq_elem {
-    TAILQ_ENTRY(listq_elem) tailq;
-    struct cmdq_head *datum;
-    /* ... */
+    struct cmdq_head *cmds;
+    STAILQ_ENTRY(listq_elem) listq_entries;
 };
 
-TAILQ_HEAD(listq_head, listq_elem);
+STAILQ_HEAD(listq_head, listq_elem);
 
 //Redir init_redir(char *in_redir, char *out_redir);
 //

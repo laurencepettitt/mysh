@@ -36,6 +36,7 @@ int linehandler(const char *line) {
     int next_status = parse_line(line);
     // No EOF received
     if (next_status < EXIT_EOF) {
+        printf("next_status < EXIT_EOF (256)\n");
         status = next_status;
         if (status >= EXIT_SIGNAL_OFFSET)
             receive_signal(1);
@@ -43,8 +44,10 @@ int linehandler(const char *line) {
     }
     // If next_status is strictly greater than EXIT_EOF, a command was executed on this line, then we got EXIT_EOF.
     // In this case, the exit status of the command was added to EXIT_EOF + 1 before being returned as next_status.
-    if (next_status > EXIT_EOF)
+    if (next_status > EXIT_EOF) {
+        printf("next_status > EXIT_EOF (256)\n");
         status = next_status - EXIT_EOF - 1;
+    }
     // If next_status is equal to EXIT_EOF, then we received EOF, so keep status from previous command and stop running.
     running = 0;
     return EXIT_EOF;
