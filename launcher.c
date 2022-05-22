@@ -67,9 +67,9 @@ int launch_builtin_cd(size_t argc, char **args) {
     if (strcmp(args[1], "-") == 0) {
         if (OWD == NULL)
             return EXIT_FAILURE;
+        // print the previous dir
         printf("%s\n", OWD);
         int res = mysh_chdir(OWD);
-//        printf("%s\n", PWD);
         return res;
     }
     // Go to dir
@@ -125,7 +125,8 @@ int launch_pipeline(struct cmd_list_t l) {
         }
 
         // Fork
-        if ((pids[i] = fork()) < 0) {
+        pids[i] = fork();
+        if (pids[i] < 0) {
             // Couldn't fork
             return EXIT_FAILURE;
         } else if (pids[i] == 0) {
@@ -173,7 +174,9 @@ int launch_pipeline(struct cmd_list_t l) {
                     close(infd);
                 }
             }
-            // TODO: launch builtin
+            if (is_builtin(args)) {
+                exit(launch_builtin(argc, args));
+            }
             execvp(args[0], args);
             // Problem with args, exit child process
             char *fmt = "mysh: %s";
@@ -190,9 +193,9 @@ int launch_pipeline(struct cmd_list_t l) {
         }
     }
 
+    // Parent process
     int res[l.length];
     for (size_t i = 0; i < l.length; i++) {
-        // Parent process
         int status;
         do {
             // TODO: Not sure if to use WUNTRACED here

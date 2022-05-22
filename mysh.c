@@ -17,7 +17,10 @@ int main(int argc, char *argv[]) {
     sigint_received = 0;
     struct sigaction act = { 0 };
     act.sa_handler = sighandler;
-    sigaction(SIGINT, &act, NULL);
+    if (sigaction(SIGINT, &act, NULL) == -1) {
+        perror("mysh: sigaction");
+        return EXIT_FAILURE;
+    }
 
     // Interactive mode
     if (argc == 1)
@@ -43,6 +46,6 @@ int main(int argc, char *argv[]) {
         return res;
     }
 
-    fprintf(stderr, "Unsupported arguments.");
+    fprintf(stderr, "mysh: unsupported arguments.");
     return EXIT_FAILURE;
 }

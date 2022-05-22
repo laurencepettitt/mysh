@@ -129,16 +129,23 @@ int repl_file(int fd) {
 
         // Ensure lbuf is initialised
         if (lbuf == NULL) {
-            size_t cap = 1;
-            lbuf = malloc(cap * sizeof(char));
+            lbuf_cap = 1;
+            lbuf = (char *)malloc(lbuf_cap * sizeof(char));
+            if (!lbuf) {
+                fprintf(stderr, "mysh: malloc: failed to allocate memory.");
+                exit(EXIT_FAILURE);
+            }
             lbuf_len = 0;
-            lbuf_cap = cap;
         }
 
         // Ensure lbuf is large enough to insert the new char c
-        if (lbuf_len + 1 > lbuf_cap) {
+        if (lbuf_len >= lbuf_cap) {
             lbuf_cap *= 2;
-            lbuf = realloc(lbuf, lbuf_cap * sizeof(char));
+            lbuf = (char *)realloc(lbuf, lbuf_cap * sizeof(char));
+            if (!lbuf) {
+                fprintf(stderr, "mysh: realloc: failed to reallocate memory.");
+                exit(EXIT_FAILURE);
+            }
         }
 
         // Insert the new character c
@@ -159,7 +166,8 @@ int repl_file(int fd) {
             break;
         }
     }
-    free(lbuf);
+    if (lbuf)
+        free(lbuf);
     return status;
 }
 
@@ -190,7 +198,7 @@ int repl_interactive() {
         r = select(FD_SETSIZE, &fds, NULL, NULL, NULL);
         if (r < 0 && errno != EINTR)
         {
-            perror("mysh: select"); // TODO: this?
+            perror("mysh: select");
             status = EXIT_FAILURE;
             running = 0;
             break;

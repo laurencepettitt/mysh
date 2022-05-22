@@ -4,7 +4,6 @@
 #include "ast.h"
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include "exitcodes.h"
 #include "parser.h"
 #include "launcher.h"
@@ -33,7 +32,6 @@ int parse_line_internal(const char *line, struct list_list_t **parse_result) {
 }
 
 // TODO: custom yyparse to catch sigint flag
-// TODO: use left recursion for semicolon delimited lists
 int parse_line(const char *line) {
     if (line == NULL)
         return EXIT_EOF;

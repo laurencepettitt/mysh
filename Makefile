@@ -9,7 +9,7 @@ PROGRAMS = mysh
 
 all: $(PROGRAMS)
 
-grammar.tab.c grammar.tab.h: grammar.y ast.c ast.h
+grammar.tab.c grammar.tab.h: grammar.y ast.c ast.h ast.c
 	$(BISON) -t -v -d grammar.y
 
 lexer.yy.c: lexer.l grammar.tab.h
