@@ -3,11 +3,9 @@
 #include <unistd.h>
 #include "string.h"
 #include <wait.h>
-#include <limits.h> /* PATH_MAX */
 #include "exitcodes.h"
 #include "launcher.h"
 #include "ast.h"
-#include <sys/queue.h>
 #include <fcntl.h>
 
 extern int sigint_received;
