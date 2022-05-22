@@ -40,12 +40,14 @@ int parse_line(const char *line) {
     if (line[0] == '\0')
         return EXIT_EMPTY;
 
-    struct list_list_t _parse_tree;
+    struct list_list_t _parse_tree = {NULL, 0, 0};
     struct list_list_t *parse_tree = &_parse_tree;
     int res = parse_line_internal(line, &parse_tree);
 
-    if (res != EXIT_SUCCESS)
+    if (res != EXIT_SUCCESS) {
+        free_list_list(_parse_tree);
         return res;
+    }
 
     if (parse_tree == NULL)
         return EXIT_BLANK;
