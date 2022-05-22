@@ -2,6 +2,8 @@
 #define LIBMYSHSIGNAL_H
 
 #define EXIT_EOF (256)
+#define EXIT_EMPTY (512)
+#define EXIT_BLANK (513)
 #define EXIT_SIGNAL_OFFSET (128)
 #define EXIT_SYNTAX_ERROR (2)
 #define EXIT_UNKNOWN_COMMAND (127)

@@ -1,32 +1,30 @@
 %{
 #include <stdlib.h>
 #include <stdio.h>
-#include "arg_list.c"
-
+#include "ast.c"
 
 // remove implicit declaration warnings
-void yyerror(struct listq_head **parse_result, char *);
+void yyerror(struct list_list_t **parse_result, char *);
 int yylex();
-//int yyerror(const char * format);
 %}
 %debug
 %define parse.error custom
 %locations
-%parse-param {struct listq_head **parse_result}
+%parse-param {struct list_list_t **parse_result}
 %code requires {
-#include "arg_list.h"
+#include "ast.h"
 }
 
 %union {
     char *str;
-    struct arg_list_t *arg_list_p;
+    struct arg_list_t arg_list_data;
     Redir redir_data;
-    struct cmdq_head *pipeline_data;
-    struct listq_head *list_data;
+    struct cmd_list_t pipeline_data;
+    struct list_list_t list_data;
 }
 %type <str> arg file
 %type <redir_data> redirs in_redir out_redir redir out_redir_append
-%type <arg_list_p> args cmd
+%type <arg_list_data> redirs_args cmd
 %type <pipeline_data> pipeline
 %type <list_data> list
 %token STRING
@@ -35,72 +33,72 @@ int yylex();
 
 // line is a list optionally followed with a semicolon
 line:
-    %empty { printf("line: empty\n"); }
-    | list { printf("line: list\n"); *parse_result = $1; }
-    | list ';' { printf("line: list ';'\n"); *parse_result = $1; }
+    %empty { *parse_result = NULL; }
+    | list { **parse_result = $1; }
+    | list ';' { **parse_result = $1; }
     ;
 
 // list is a list of pipeline, separated by semicolons
 list:
-    pipeline { printf("list: pipeline\n"); print_cmdq($1); struct listq_elem *e = alloc_listq_elem($1); print_listqelem(e); $$ = init_listq(e); print_listqelem(e);}
-    | list ';' pipeline { printf("list: list ';' pipeline\n"); struct listq_elem *e = alloc_listq_elem($3); print_listqelem(e); $$ = insert_listq_elem($1, e); print_listqelem(e); }
+    pipeline { $$ = init_list_list($1); }
+    | list ';' pipeline { $$ = insert_list_list_elem($1, $3); }
     ;
 
 // pipeline is a list of commands, separated by pipes
 pipeline:
-    cmd { printf("pipeline: cmd\n");  $$ = init_cmdq(alloc_cmdq_elem($1)); }
-    | pipeline '|' cmd { printf("pipeline: pipeline '|' cmd\n"); struct cmdq_elem * e = alloc_cmdq_elem($3); print_cmdqelem(e); $$ = insert_cmdq_elem($1, e); print_cmdqelem(e); }
+    cmd { $$ = init_cmd_list($1); }
+    | pipeline '|' cmd { $$ = insert_cmd_list_elem($1, $3); }
     ;
 
 // cmd is a list of args (with optional redirection(s) for input or output)
 cmd:
-    args { printf("cmd: args\n"); $$ = $1; }
-    | redirs args { printf("cmd: redirs args\n"); $$ = set_arg_list_redir($2, $1); }
-    | args redirs { printf("cmd: args redirs\n"); $$ = set_arg_list_redir($1, $2); }
-    | redirs args redirs { printf("cmd: redirs args redirs\n"); { $$ = set_arg_list_redir($2, merge_redirs($1, $3)); }}
+    redirs_args { $$ = $1; }
+    | redirs_args redirs { $$ = set_arg_list_redir($1, $2); }
+    ;
+
+redirs_args:
+    arg { $$ = init_arg_list($1); }
+    | redirs arg { $$ = set_arg_list_redir(init_arg_list($2), $1); }
+    | redirs_args arg { $$ = add_arg($1, $2); }
+    | redirs_args redir arg { $$ = set_arg_list_redir(add_arg($1, $3), $2); }
     ;
 
 redirs:
-    redir { printf("redirs: redir\n"); $$ = $1; }
-    | redirs redir { printf("redirs: redirs redir\n"); $$ = merge_redirs($1, $2); }
+    redir { $$ = $1; }
+    | redirs redir { $$ = merge_redirs($1, $2); }
     ;
 
 redir:
     in_redir { $$ = $1; }
-    | out_redir { $$ = $1; }
     | out_redir_append { $$ = $1; }
+    | out_redir { $$ = $1; }
     ;
 
 in_redir:
-    '<' file { printf("in_redir: '<' file\n"); $$ = init_redir($2, NULL, -1); }
+    '<' file { $$ = init_redir($2, NULL, -1); }
     ;
 
 out_redir:
-    '>' file { printf("out_redir: '>' file\n"); $$ = init_redir(NULL, $2, 0); }
+    '>' file { $$ = init_redir(NULL, $2, 0); }
     ;
 
 out_redir_append:
-    ">>" file { printf("out_redir_append: \">>\" file\n"); $$ = init_redir(NULL, $2, 1); }
-    ;
-
-args:
-    arg { printf("args: arg\n"); $$ = add_arg(init_arg_list(), $1); }
-    | args arg { printf("args: args arg\n"); $$ = add_arg($1, $2); }
+    '>' '>' file { $$ = init_redir(NULL, $3, 1); }
     ;
 
 file:
-    STRING { printf("file: STRING (%s)\n", yylval.str); $$ = yylval.str; }
+    STRING { $$ = yylval.str; }
     ;
 
 arg:
-    STRING { printf("arg: STRING (%s)\n", yylval.str); $$ = yylval.str; }
+    STRING { $$ = yylval.str; }
     ;
 
 %%
 
 extern int line_number;
 
-int yyreport_syntax_error(const yypcontext_t *ctx, struct listq_head **parse_result)
+int yyreport_syntax_error(const yypcontext_t *ctx, struct list_list_t **parse_result)
 {
     int res = 0;
     *parse_result = NULL;

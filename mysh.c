@@ -8,8 +8,7 @@
 
 volatile sig_atomic_t sigint_received;
 
-static void sighandler (int sig)
-{
+static void sighandler(int sig) {
     if (sig == SIGINT)
         sigint_received = 1;
 }

@@ -6,7 +6,7 @@
 #include <limits.h> /* PATH_MAX */
 #include "exitcodes.h"
 #include "launcher.h"
-#include "arg_list.h"
+#include "ast.h"
 #include <sys/queue.h>
 #include <fcntl.h>
 
@@ -65,8 +65,11 @@ int launch_builtin_cd(size_t argc, char **args) {
     }
     // Go to previous dir
     if (strcmp(args[1], "-") == 0) {
+        if (OWD == NULL)
+            return EXIT_FAILURE;
+        printf("%s\n", OWD);
         int res = mysh_chdir(OWD);
-        printf("%s\n", PWD);
+//        printf("%s\n", PWD);
         return res;
     }
     // Go to dir
@@ -84,12 +87,12 @@ int is_builtin(char **args) {
 int launch_builtin(size_t argc, char **args) {
     // EOF
     if (args == NULL) {
-        printf("args == NULL\n");
+//        printf("args == NULL\n");
         return EXIT_EOF;
     }
     // Empty line, not EOF.
     if (args[0] == NULL) {
-        printf("args[0] == NULL\n");
+//        printf("args[0] == NULL\n");
         return EXIT_SUCCESS;
     }
     // Exit command
@@ -102,66 +105,22 @@ int launch_builtin(size_t argc, char **args) {
     return -1;
 }
 
-/* Launches an external (non-builtin) command.
- * The process forks and execs the command in a child process.
- * First element of args must be the actual command.
- * Following elements of args can be arguments to the command.
+/* Launches a command pipeline (or just one command).
+ * The process forks and execs the commands, each in a child process.
  */
-int launch_exec(char **args) {
-    pid_t pid;
-    int status;
-    // FORK
-    if ((pid = fork()) < 0) {
-        // Couldn't fork
-        return EXIT_FAILURE;
-    } else if (pid == 0) {
-        // Child process
-        execvp(args[0], args);
-        // Problem with args, exit child process
-        exit(EXIT_UNKNOWN_COMMAND);
-    }
+int launch_pipeline(struct cmd_list_t l) {
+    pid_t pids[l.length];
+    int pds[l.length - 1][2];
+    for (size_t i = 0; i < l.length; i++) {
+        struct arg_list_t arg_list = l.head[i];
+        size_t argc = arg_list.length;
+        char **args = arg_list.head;
+        Redir redir = arg_list.redir;
 
-    // Parent process
-    do {
-        // TODO: Not sure if to use WUNTRACED here
-        waitpid(pid, &status, WUNTRACED);
-    } while (!WIFSIGNALED(status) && !WIFEXITED(status));
-
-    if (WIFEXITED(status))
-        return WEXITSTATUS(status);
-    if (WIFSIGNALED(status))
-        return EXIT_SIGNAL_OFFSET + WTERMSIG(status);
-//    if (WIFSTOPPED(status))
-//        return EXIT_SIGNAL_OFFSET + WSTOPSIG(status);
-    return EXIT_FAILURE;
-}
-
-/* Launches a command (builtin or external).
- */
-//int launch(size_t argc, char **args) {
-//}
-
-int launch_pipeline(struct cmdq_head *h) {
-//    int res = EXIT_SUCCESS;
-    struct cmdq_elem *elem;
-    size_t len_pipe = 0;
-    STAILQ_FOREACH(elem, h, cmdq_entries) {
-        len_pipe++;
-    }
-
-    pid_t pids[len_pipe];
-    int pds[len_pipe - 1][2];
-    size_t i = 0;
-    STAILQ_FOREACH(elem, h, cmdq_entries) {
-        struct arg_list_t *arg_list = elem->arg_list;
-        size_t argc = arg_list->length;
-        char **args = arg_list->head;
-        Redir redir = arg_list->redir;
-
-        if (i == 0 && len_pipe == 1 && is_builtin(args)) {
+        if (i == 0 && l.length == 1 && is_builtin(args)) {
             return launch_builtin(argc, args);
         }
-        if (i < len_pipe - 1) {
+        if (i < l.length - 1) {
             pipe(pds[i]);
         }
 
@@ -170,55 +129,69 @@ int launch_pipeline(struct cmdq_head *h) {
             // Couldn't fork
             return EXIT_FAILURE;
         } else if (pids[i] == 0) {
-
             // Child process
-            if (i < len_pipe - 1) {
+            if (i < l.length - 1) {
                 // replace stdout with write end of pds[i]
-                // TODO: check use of  dup2
-                dup2(pds[i][1], 1);
+                if (!redir.out_redir)
+                    dup2(pds[i][1], fileno(stdout));
                 close(pds[i][0]);
                 close(pds[i][1]);
             }
             if (i > 0) {
                 // replace stdin with read end of pds[i-1]
-                dup2(pds[i - 1][0], 0);
+                if (!redir.in_redir)
+                    dup2(pds[i - 1][0], fileno(stdin));
                 close(pds[i - 1][0]);
                 close(pds[i - 1][1]);
             }
-            printf("CHILD in pipe\n");
-            printf("%s\n", redir.out_redir);
             if (redir.out_redir) {
                 int flags = O_CREAT | O_WRONLY | (redir.out_redir_append ? O_APPEND : O_TRUNC);
-                int outfd = open(redir.out_redir, flags);
+                mode_t mode = 0664;
+                int outfd = open(redir.out_redir, flags, mode);
                 if (outfd == -1) {
-                    // TODO: error
+                    char *fmt = "mysh: %s";
+                    char pref[strlen(fmt) + strlen(redir.out_redir)];
+                    sprintf(pref, fmt, redir.out_redir);
+                    perror(pref);
+                    exit(EXIT_FAILURE);
+                } else {
+                    dup2(outfd, fileno(stdout));
+                    close(outfd);
                 }
-                dup2(outfd, 1);
-                close(outfd);
             }
             if (redir.in_redir) {
-                int flags = O_CREAT | O_RDONLY;
-                int infd = open(redir.out_redir, flags);
+                int flags = O_RDONLY;
+                int infd = open(redir.in_redir, flags);
                 if (infd == -1) {
-                    // TODO: error
+                    char *fmt = "mysh: %s";
+                    char pref[strlen(fmt) + strlen(redir.in_redir)];
+                    sprintf(pref, fmt, redir.in_redir);
+                    perror(pref);
+                    exit(EXIT_FAILURE);
+                } else {
+                    dup2(infd, fileno(stdin));
+                    close(infd);
                 }
-                dup2(infd, 0);
-                close(infd);
             }
             // TODO: launch builtin
             execvp(args[0], args);
             // Problem with args, exit child process
+            char *fmt = "mysh: %s";
+            char pref[strlen(fmt) + strlen(args[0])];
+            sprintf(pref, fmt, args[0]);
+            perror(pref);
             exit(EXIT_UNKNOWN_COMMAND);
         }
+
         // Parent process
-        close(pds[i - 1][0]);
-        close(pds[i - 1][1]);
-        i++;
+        if (i > 0) {
+            close(pds[i - 1][0]);
+            close(pds[i - 1][1]);
+        }
     }
 
-    int res[len_pipe];
-    i = 0;
-    STAILQ_FOREACH(elem, h, cmdq_entries) {
+    int res[l.length];
+    for (size_t i = 0; i < l.length; i++) {
         // Parent process
         int status;
         do {
@@ -234,22 +207,14 @@ int launch_pipeline(struct cmdq_head *h) {
             res[i] = EXIT_FAILURE;
 //    if (WIFSTOPPED(status))
 //        return EXIT_SIGNAL_OFFSET + WSTOPSIG(status);
-        i++;
     }
-    return res[i - 1];
+    return res[l.length - 1];
 }
 
-int launch_list(struct listq_head *h) {
+int launch_list(struct list_list_t l) {
     int res = EXIT_SUCCESS;
-    struct listq_elem *elem;
-    int i = 0;
-    if (h == NULL) {
-        // empty line
-        return EXIT_EOF;
-    }
-    STAILQ_FOREACH(elem, h, listq_entries) {
-        int nres = launch_pipeline(elem->cmds);
-        printf("res %i\n", nres);
+    for (size_t i = 0; i < l.length; i++) {
+        int nres = launch_pipeline(l.head[i]);
         if (nres == EXIT_EOF) {
             res += EXIT_EOF;
             if (i > 0)
@@ -257,8 +222,6 @@ int launch_list(struct listq_head *h) {
             break;
         }
         res = nres;
-        i++;
     }
-    printf("res %i\n", res);
     return res;
 }

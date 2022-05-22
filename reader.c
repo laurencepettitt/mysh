@@ -18,12 +18,17 @@
 #include "reader.h"
 #include "parser.h"
 
+#define REPL_INTERACTIVE (0)
+#define REPL_STRING (1)
+#define REPL_FILE (2)
+
 extern volatile sig_atomic_t sigint_received;
 
 int line_number = 1;
 
 int status = EXIT_SUCCESS;
 int running = 1;
+int mode = REPL_INTERACTIVE;
 
 void receive_signal(int print_message) {
     sigint_received = 0;
@@ -34,21 +39,28 @@ void receive_signal(int print_message) {
 
 int linehandler(const char *line) {
     int next_status = parse_line(line);
-    // No EOF received
+
+    // Straightforward success
     if (next_status < EXIT_EOF) {
-        printf("next_status < EXIT_EOF (256)\n");
         status = next_status;
         if (status >= EXIT_SIGNAL_OFFSET)
             receive_signal(1);
         return EXIT_SUCCESS;
     }
+
+    // In some situations we want to keep status from previous command and continue running.
+    if (mode == REPL_INTERACTIVE && next_status == EXIT_BLANK)
+        return EXIT_SUCCESS;
+    if (mode == REPL_FILE || mode == REPL_STRING)
+        if (next_status == EXIT_BLANK || next_status == EXIT_EMPTY)
+            return EXIT_SUCCESS;
+
     // If next_status is strictly greater than EXIT_EOF, a command was executed on this line, then we got EXIT_EOF.
-    // In this case, the exit status of the command was added to EXIT_EOF + 1 before being returned as next_status.
-    if (next_status > EXIT_EOF) {
-        printf("next_status > EXIT_EOF (256)\n");
+    // In this case, the exit status of the last command was added to EXIT_EOF + 1 before being returned as next_status.
+    if (next_status > EXIT_EOF && next_status < EXIT_EMPTY)
         status = next_status - EXIT_EOF - 1;
-    }
-    // If next_status is equal to EXIT_EOF, then we received EOF, so keep status from previous command and stop running.
+
+    // Otherwise, we stop running and return EXIT_EOF
     running = 0;
     return EXIT_EOF;
 }
@@ -65,6 +77,7 @@ static void rl_callback_handler(char *line) {
 }
 
 int repl_string(char *in) {
+    mode = REPL_STRING;
     if (in == NULL)
         return EXIT_FAILURE;
     const char nl[2] = "\n";
@@ -88,6 +101,7 @@ int repl_string(char *in) {
 }
 
 int repl_file(int fd) {
+    mode = REPL_FILE;
     char *lbuf = NULL;
     size_t lbuf_len = 0;
     size_t lbuf_cap = 0;
@@ -113,6 +127,7 @@ int repl_file(int fd) {
         if (c == '\n')
             c = '\0';
 
+        // Ensure lbuf is initialised
         if (lbuf == NULL) {
             size_t cap = 1;
             lbuf = malloc(cap * sizeof(char));
@@ -120,11 +135,13 @@ int repl_file(int fd) {
             lbuf_cap = cap;
         }
 
+        // Ensure lbuf is large enough to insert the new char c
         if (lbuf_len + 1 > lbuf_cap) {
             lbuf_cap *= 2;
             lbuf = realloc(lbuf, lbuf_cap * sizeof(char));
         }
 
+        // Insert the new character c
         lbuf[lbuf_len] = c;
         lbuf_len++;
 
@@ -146,8 +163,8 @@ int repl_file(int fd) {
     return status;
 }
 
-int repl_interactive()
-{
+int repl_interactive() {
+    mode = REPL_INTERACTIVE;
     const char *prompt = "mysh4$ ";
 
     fd_set fds;
