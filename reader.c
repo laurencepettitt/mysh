@@ -159,6 +159,8 @@ int repl_file(int fd) {
             lbuf_len = 0;
             lbuf_cap = 0;
             line_number++;
+            if (status == EXIT_SYNTAX_ERROR)
+                return status;
         }
 
         if (sigint_received) {
